@@ -42,13 +42,14 @@ If we want to do that we would configure these values as further options that ge
 The data is parsed through the GeoLocation schema's changeset function which performs a number of checks. 
 - `ip_address`: Must be a valid IP address.
 - `latitude` and `longitude`: Must be within valid ranges.
-- `country`: Must be a valid ISO 3166-1 (alpha 2) country code, and it overrides the CSV file value with our configured list of countries.
+- `country_code`: Must be a valid ISO 3166-1 (alpha 2) country code.
+- `country`: We overridethe CSV file value with our configured list of countries.
 - `city`: Must be a string.
 - `mystery_value`: Must be castable as a bigint.
 
 ### Import Report
 
-During the CSV data import, progress is logged to `:info`. At the end of the import, a final update and error file path are logged.
+During the CSV data import, progress is logged to `log_level: :info`. At the end of the import, we log the final update and error file path.
 
 #### Example Report
 
@@ -101,11 +102,11 @@ The GeoLocService makes use of a GenServer to collate the results of the import 
 It is started with all the options that are required for the import process.
 If there is a problem with the options the GenServer will not start and will return an error message.
 
-I implemented a handle_call/3 callback to handle the import of the CSV file.
-To allow the GenServer to process the incoming messages from the tasks that are spawned to import the data I reply with a :no_reply 
-from the initial handle_call function, while keeping the caller_pid in the state. 
+I implemented a `handle_call/3` callback to handle the import of the CSV file.
+To allow the GenServer to process the incoming messages from the tasks that are spawned to import the data I reply with `:no_reply` 
+from the initial handle_call function, while keeping the `caller_pid` in the state. 
 
-When the GenServer receives the final :done message it will send the reply to the caller id with GenServer.reply/2 and then stop.
+When the GenServer receives the final `:done` message it will send the reply to the caller id with `GenServer.reply/2` and then stop.
 
 #### Importing
 
@@ -113,12 +114,13 @@ The path that is provided to the import function is converted to a stream.
 If the path is a url we do a GET request and stream the values from github. 
 If the path is a file path we use `File.stream!`. 
 
-We read the stream in lines and then use Task.async_stream to process the lines in parallel.
+We read the stream in lines and then use `Task.async_stream/3` to process the lines in parallel.
 Each task to import a row into the database responds to the ImportServer with either an `:accepted` or `{:error, changeset_or_binary, index}` message.
-When the stream has completed running we send a :done message to the ImportServer.
+When the stream has completed running we send a `:done` message to the ImportServer.
 
 This allows for decoupling of the GenServer and the import process which means we can provide feedback to the user about the progress of the import.
-Errors are continuously logged to the error file as they occur. This provides a report of errors with the row index where they occurred, which will allow us to fix the errors in the CSV file. I prefered this approach because it allows for an arbitrary number of errors to be logged. If I maintained the errors the GenServer staet would grow indefinitely.
+Errors are continuously logged to the error file as they occur. 
+The error report lists all the import errors with the row index where they occurred, which will allow us to fix the errors in the CSV file. I prefered this approach because it allows for an arbitrary number of errors to be logged. If I maintained the errors the GenServer staet would grow indefinitely.
 
 ### API Format
 
