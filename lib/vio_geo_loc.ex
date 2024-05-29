@@ -1,4 +1,6 @@
 defmodule VioGeoLoc do
+  require Logger
+
   @moduledoc """
   VioGeoLoc keeps the contexts that define your domain
   and business logic.
@@ -6,4 +8,13 @@ defmodule VioGeoLoc do
   Contexts are also responsible for managing your data, regardless
   if it comes from the database, an external API or others.
   """
+
+  @doc """
+  Deleagtes the import to the GeoLocService module.
+
+  """
+  @spec import(binary()) :: {:error, any()}
+  def import(path, opts \\ []) do
+    GeoLocService.import(path, opts)
+  end
 end

@@ -7,6 +7,8 @@ defmodule VioGeoLocWeb.Router do
 
   scope "/api", VioGeoLocWeb do
     pipe_through :api
+
+    get "/geo_locations/:ip_address", GeoLocationController, :show
   end
 
   # Enable LiveDashboard and Swoosh mailbox preview in development

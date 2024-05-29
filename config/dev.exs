@@ -8,7 +8,9 @@ config :vio_geo_loc, VioGeoLoc.Repo,
   database: "vio_geo_loc_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
-  pool_size: 10
+  pool_size: 10,
+  port: 5432,
+  log: :debug
 
 # For development, we disable any cache and enable
 # debugging and code reloading.
@@ -57,6 +59,7 @@ config :vio_geo_loc, dev_routes: true
 
 # Do not include metadata nor timestamps in development logs
 config :logger, :console, format: "[$level] $message\n"
+config :logger, level: :info
 
 # Set a higher stacktrace during development. Avoid configuring such
 # in production as building large stacktraces may be expensive.

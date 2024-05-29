@@ -54,8 +54,7 @@ defmodule VioGeoLoc.MixProject do
       {:jason, "~> 1.2"},
       {:dns_cluster, "~> 0.1.1"},
       {:bandit, "~> 1.2"},
-      {:nimble_csv, "~> 1.1"},
-      {:req, "~> 0.4.0"}
+      {:geo_loc_service, git: "https://github.com/Ivor/geo_loc_service.git", tag: "0.1.0"}
     ]
   end
 
@@ -68,7 +67,7 @@ defmodule VioGeoLoc.MixProject do
   defp aliases do
     [
       setup: ["deps.get", "ecto.setup", "assets.setup", "assets.build"],
-      "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+      "ecto.setup": ["ecto.create", "ecto.migrate"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
       "assets.setup": ["tailwind.install --if-missing", "esbuild.install --if-missing"],

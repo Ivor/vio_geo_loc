@@ -2,6 +2,8 @@ defmodule VioGeoLoc.GeoLocation do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @type t :: %__MODULE__{}
+
   schema "geo_locations" do
     field :ip_address, :string
     field :country_code, :string
@@ -10,7 +12,6 @@ defmodule VioGeoLoc.GeoLocation do
     field :latitude, :decimal
     field :longitude, :decimal
     field :mystery_value, :integer
-    field :index, :integer, virtual: true
 
     timestamps(type: :utc_datetime)
   end
@@ -25,8 +26,7 @@ defmodule VioGeoLoc.GeoLocation do
       :city,
       :latitude,
       :longitude,
-      :mystery_value,
-      :index
+      :mystery_value
     ])
     |> validate_required([:ip_address, :country_code, :country, :latitude, :longitude])
     |> validate_format(
